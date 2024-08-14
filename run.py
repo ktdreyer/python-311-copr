@@ -29,7 +29,9 @@ def podman_run(container, *args, **kwargs):
 
 
 def find_rhel_nvr(container, rpm):
-    rpm_qv = podman_run(container, 'rpm', '-q', rpm, text=True).strip()
+    # XXX this will only work for packages that are not in EPEL. Need to
+    # install EPEL... see the comment below about doing this all at once.
+    rpm_qv = podman_run(container, 'dnf', 'repoquery', '-q', '-s', rpm, text=True).strip()
     return parse_nvra(rpm_qv)
 
 
@@ -67,6 +69,9 @@ def update_copr(copr_package, rhel_nvr, os_version):
 
 def main():
     client = Client.create_from_config_file()
+
+    # TODO: assemble the full list of RHEL packages and run repoquery on all
+    # of them at once, rather than trying to query them one by one.
 
     for copr_package, os_versions in PACKAGES.items():
         for os_version in os_versions:
