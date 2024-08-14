@@ -1,3 +1,5 @@
+[![test package installs](https://github.com/ktdreyer/python-311-copr/actions/workflows/tests.yml/badge.svg)](https://github.com/ktdreyer/python-311-copr/actions/workflows/tests.yml)
+
 Extra libraries for Python 3.11 on RHEL 8 and 9. Requires EPEL.
 
 https://copr.fedorainfracloud.org/coprs/ktdreyer/python3.11/
