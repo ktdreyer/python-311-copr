@@ -18,6 +18,7 @@ PACKAGES = {
 
 def podman(*args, **kwargs):
     args = ('podman',) + args
+    print('+ ' + ' '.join(args))
     return subprocess.check_output(args, **kwargs)
 
 
