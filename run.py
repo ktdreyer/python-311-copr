@@ -39,12 +39,16 @@ def podman_run(container, *args, **kwargs):
     return podman(*args, **kwargs)
 
 
-def find_rhel_nvrs(container, names):
-    # XXX: This only works for packages in the ubi9 repos. It does not work
-    # for EPEL packages or non-ubi RHEL packages.
-    # We should probably install epel-release.
-    cmd = 'dnf repoquery -q ' + ' '.join(names)
-    output = podman_run(container, '/bin/bash', '-c', cmd, text=True).strip()
+def find_rhel_nvrs(os_version, names):
+    """
+    Find NVRs outside Copr (UBI repos and EPEL)
+    """
+    base_image = f'ubi{os_version}'
+    container = f'copr-test-{base_image}'
+    epel = f'https://dl.fedoraproject.org/pub/epel/epel-release-latest-{os_version}.noarch.rpm'
+    podman_run(base_image, 'dnf', '-y', 'install', epel)
+    podman('start', container)
+    output = podman('exec', container, 'dnf', 'repoquery', '-q', *names, text=True).strip()
     rpms = output.splitlines()
     nvrs = [parse_nvra(rpm) for rpm in rpms]
     missing = []
@@ -101,9 +105,8 @@ def main():
     client = Client.create_from_config_file()
 
     for os_version, copr_packages in PACKAGES.items():
-        container = f'ubi{os_version}'
         rhel_packages = rhel_package_names(copr_packages)
-        rhel_nvrs = find_rhel_nvrs(container, rhel_packages)
+        rhel_nvrs = find_rhel_nvrs(os_version, rhel_packages)
         copr_nvrs = find_copr_nvrs(client, os_version, copr_packages)
         for rhel_nvr, copr_nvr in zip(rhel_nvrs, copr_nvrs):
             if verrel_equal(rhel_nvr, copr_nvr):
