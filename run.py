@@ -25,7 +25,7 @@ def podman(*args, **kwargs):
 def podman_run(container, *args, **kwargs):
     """ Run a command in a throwaway container """
     name = f'copr-test-{container}'
-    args = ('run', '-it', '--name', name, container) + args
+    args = ('run', '-it', '--replace', '--name', name, container) + args
     return podman(*args, **kwargs)
 
 
