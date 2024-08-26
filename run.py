@@ -43,7 +43,8 @@ def find_rhel_nvrs(container, names):
     # XXX: This only works for packages in the ubi9 repos. It does not work
     # for EPEL packages or non-ubi RHEL packages.
     # We should probably install epel-release.
-    output = podman_run(container, 'dnf', 'repoquery', '-q', *names, text=True).strip()
+    cmd = 'dnf repoquery -q ' + ' '.join(names)
+    output = podman_run(container, '/bin/bash', '-c', cmd, text=True).strip()
     rpms = output.splitlines()
     nvrs = [parse_nvra(rpm) for rpm in rpms]
     missing = []
