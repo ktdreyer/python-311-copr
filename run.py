@@ -89,8 +89,8 @@ def find_copr_nvrs(client, os_version, copr_packages):
 
 
 def verrel_equal(rhel_nvr, copr_nvr):
-    print('RHEL: {name}-{version}-{release}'.format(**rhel_nvr))
-    print('Copr: {name}-{version}-{release}'.format(**copr_nvr))
+    # print('RHEL: {name}-{version}-{release}'.format(**rhel_nvr))
+    # print('Copr: {name}-{version}-{release}'.format(**copr_nvr))
     return bool(rhel_nvr['version'] == copr_nvr['version'] and rhel_nvr['release'] != copr_nvr['release'])
 
 
