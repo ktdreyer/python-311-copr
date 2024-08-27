@@ -35,7 +35,7 @@ def podman(*args, **kwargs):
 def podman_run(container, *args, **kwargs):
     """ Run a command in a throwaway container """
     name = f'copr-test-{container}'
-    args = ('run', '-it', '--replace', '--name', name, container) + args
+    args = ('run', '-itd', '--replace', '--name', name, container) + args
     return podman(*args, **kwargs)
 
 
@@ -45,9 +45,9 @@ def find_rhel_nvrs(os_version, names):
     """
     base_image = f'ubi{os_version}'
     container = f'copr-test-{base_image}'
+    podman_run(base_image, 'sleep', 'infinity')
     epel = f'https://dl.fedoraproject.org/pub/epel/epel-release-latest-{os_version}.noarch.rpm'
-    podman_run(base_image, 'dnf', '-y', 'install', epel)
-    podman('start', container)
+    podman('exec', container, 'dnf', '-y', 'install', epel)
     output = podman('exec', container, 'dnf', 'repoquery', '-q', *names, text=True).strip()
     rpms = output.splitlines()
     nvrs = [parse_nvra(rpm) for rpm in rpms]
