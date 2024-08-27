@@ -9,7 +9,7 @@ PACKAGES = {
     '8': [
         'python3.11-decorator',
         'python3.11-dnf',
-        'python3.11-gpg',
+        'python3.11-gpg',  # I used the version from EPEL 9
         'python3.11-gssapi',
         'python3.11-libcomps',
         'python3.11-libdnf',
